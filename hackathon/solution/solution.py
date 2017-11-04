@@ -10,18 +10,33 @@ def worker(msg: DataMessage) -> ResultsMessage:
     """TODO: This function should be implemented by contestants."""
     # Details about DataMessage and ResultsMessage objects can be found in /utils/utils.py
     # Dummy result is returned in every cycle here
-    if msg.grid_status:
-        if msg.buying_price == 8:
-            power_reference = 6
-        else:
-            power_reference = -6
+    p_bat = 0.0
 
+    if msg.buying_price == 8:
+        load3 = False
+    else:
+        load3 = True
+
+    if msg.grid_status:
+        load1 = True
+        load2 = True
+
+        if msg.buying_price == 8:
+            if msg.bessSOC > 0.6:
+                p_bat = 6.0
+            else:
+                p_bat = 1.0
+        else:
+            p_bat = -6.0
+    else:
+        load1 = True
+        load2 = True
 
     return ResultsMessage(data_msg=msg,
-                          load_one=True,
-                          load_two=True,
-                          load_three=True,
-                          power_reference=power_reference,
+                          load_one=load1,
+                          load_two=load2,
+                          load_three=load3,
+                          power_reference=float(p_bat),
                           pv_mode=PVMode.ON)
 
 
