@@ -2,3 +2,4 @@ numpy
 pyzmq
 mypy
 matplotlib
+scipy
