@@ -41,6 +41,9 @@ def worker(msg: DataMessage) -> ResultsMessage:
             load2 = True
         p_bat = 6
 
+    if msg.selling_price == 0 and msg.grid_status:
+        p_bat = -2
+
     return ResultsMessage(data_msg=msg,
                           load_one=load1,
                           load_two=load2,
