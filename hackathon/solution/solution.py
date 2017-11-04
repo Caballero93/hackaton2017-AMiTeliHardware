@@ -23,14 +23,16 @@ def worker(msg: DataMessage) -> ResultsMessage:
 
         if msg.buying_price == 8:
             if msg.bessSOC > 0.6:
-                p_bat = 6.0
+                p_bat = 3.0
             else:
-                p_bat = 1.0
+                p_bat = -1.0
         else:
             p_bat = -6.0
     else:
         load1 = True
-        load2 = True
+        load2 = False
+        load3 = False
+        p_bat = 6
 
     return ResultsMessage(data_msg=msg,
                           load_one=load1,
