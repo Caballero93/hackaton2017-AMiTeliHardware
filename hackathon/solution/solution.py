@@ -9,13 +9,19 @@ from hackathon.framework.http_server import prepare_dot_dir
 def worker(msg: DataMessage) -> ResultsMessage:
     """TODO: This function should be implemented by contestants."""
     # Details about DataMessage and ResultsMessage objects can be found in /utils/utils.py
-
     # Dummy result is returned in every cycle here
+    if msg.grid_status:
+        if msg.buying_price == 8:
+            power_reference = 6
+        else:
+            power_reference = -6
+
+
     return ResultsMessage(data_msg=msg,
                           load_one=True,
                           load_two=True,
                           load_three=True,
-                          power_reference=0.0,
+                          power_reference=power_reference,
                           pv_mode=PVMode.ON)
 
 
