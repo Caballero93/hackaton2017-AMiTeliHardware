@@ -22,9 +22,9 @@ def worker(msg: DataMessage) -> ResultsMessage:
         load2 = True
 
         if msg.buying_price == 8:
-            if msg.bessSOC > 0.4:
-                if msg.solar_production > 1:
-                    p_bat = 0
+            if msg.bessSOC > 0.3:
+                if msg.solar_production > msg.current_load:
+                    p_bat = -1
                 else:
                     p_bat = 2
             else:
@@ -37,7 +37,7 @@ def worker(msg: DataMessage) -> ResultsMessage:
         load3 = False
         if msg.solar_production > 2:
             load2 = True
-        if msg.bessSOC > 6:
+        if msg.bessSOC > 0.6:
             load2 = True
         p_bat = 6
 
