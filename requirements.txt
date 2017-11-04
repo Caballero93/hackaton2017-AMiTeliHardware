@@ -1,3 +1,4 @@
 pyzmq
 mypy
 matplotlib
+scipy
