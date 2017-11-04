@@ -12,7 +12,7 @@ def worker(msg: DataMessage) -> ResultsMessage:
     # Dummy result is returned in every cycle here
     p_bat = 0.0
 
-    if msg.buying_price == 8:
+    if msg.buying_price == 8 and msg.solar_production < 1:
         load3 = False
     else:
         load3 = True
@@ -22,8 +22,11 @@ def worker(msg: DataMessage) -> ResultsMessage:
         load2 = True
 
         if msg.buying_price == 8:
-            if msg.bessSOC > 0.6:
-                p_bat = 3.0
+            if msg.bessSOC > 0.4:
+                if msg.solar_production > 1:
+                    p_bat = 0
+                else:
+                    p_bat = 2
             else:
                 p_bat = -1.0
         else:
@@ -32,6 +35,10 @@ def worker(msg: DataMessage) -> ResultsMessage:
         load1 = True
         load2 = False
         load3 = False
+        if msg.solar_production > 2:
+            load2 = True
+        if msg.bessSOC > 6:
+            load2 = True
         p_bat = 6
 
     return ResultsMessage(data_msg=msg,
