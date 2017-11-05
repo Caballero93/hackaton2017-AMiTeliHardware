@@ -4,77 +4,75 @@ from hackathon.utils.control import Control
 from hackathon.utils.utils import ResultsMessage, DataMessage, PVMode, \
     TYPHOON_DIR, config_outs
 from hackathon.framework.http_server import prepare_dot_dir
+from scipy.optimize import minimize
+
+
 
 
 def worker(msg: DataMessage) -> ResultsMessage:
     """TODO: This function should be implemented by contestants."""
     # Details about DataMessage and ResultsMessage objects can be found in /utils/utils.py
     # Dummy result is returned in every cycle here
+
+    L1,L2,L3=True,True,True
     p_bat = 0.0
-    panel = PVMode.ON
-    load1 = True
-    load2 = True
-
-    if msg.buying_price == 8 and msg.solar_production < 1:
-        load3 = False
-    else:
-        load3 = True
-
-    if msg.grid_status:
-        # if msg.buying_price == 8 and msg.solar_production < 1 and msg.bessSOC < 0.3:
-        #     load2 = False
-
-        bla2 = msg.current_load * 0.5 if load2 else 0
-
-        if msg.buying_price == 8:
-            # if msg.current_load - bla2 > 8.5:
-            #     load2 = False
-
-            if msg.selling_price == 0:
-                temp = msg.solar_production - msg.current_load + bla2
-                if temp > 0:
-                    p_bat = -temp
-                else:
-                    p_bat = 5 * msg.mainGridPower / 8
+    panel=PVMode.ON
+    if not msg.grid_status:
+        temp=msg.solar_production+6-msg.current_load
+        if temp<0:
+            if temp>-0.3*msg.current_load:
+                L3=False
             else:
-                p_bat = 5 * msg.mainGridPower / 8
-        else:
-            p_bat = -6.0
-            if msg.solar_production > msg.current_load:
-                p_bat -= msg.current_load - msg.solar_production
-    else:
-        load1 = True
-        load2 = True
-        load3 = True
-        temp = msg.solar_production + 6 - msg.current_load
-        if temp < 0:
-            if temp > -0.3*msg.current_load:
-                load3 = False
-            else:
-                load3, load2 = False, False
-
+                L2,L3=False,False
         if msg.bessSOC < 0.56:
-            load3 = False
-        if msg.bessSOC < 0.17:
-            load3, load2 = False, False
+            L3=False
+        if msg.bessSOC < 0.2:
+            L2,L3=False,False
+        if msg.solar_production>msg.current_load and msg.bessSOC>0.99:
+            panel=PVMode.OFF
 
-        bla2 = msg.current_load * 0.5 if load2 else 0
-        bla3 = msg.current_load * 0.3 if load3 else 0
+    else:
+        if msg.buying_price==3:
+            if msg.bessSOC!=1:
+                p_bat=-4.0
+            else:
+                p_bat=0.0
+        else:
+            if msg.current_load > 7.0:
+                L2 = False
+            if msg.solar_production < 0.3*msg.current_load:
+                L3=False
+            temp = msg.solar_production - msg.current_load
+            if msg.selling_price==0:
+                if( temp > 0):
+                    p_bat=-temp
+                else:
+                    if temp > -4.0:
+                        p_bat=-temp
+                    else:
+                        p_bat=4.0*msg.current_load/8
+            else:
+                if(temp > 0):
+                    p_bat=0.0
+                else:
+                    if temp > -4.0:
+                        p_bat=-temp
+                    else:
+                        p_bat=4.0*msg.current_load/8
+                #p_bat=4.0
 
-        if (msg.solar_production > msg.current_load*0.2 + bla2 + bla3) and (msg.bessSOC > 0.99):
-            panel = PVMode.OFF
 
-    if msg.bessSOC < 0.192 and p_bat > 0:
-        p_bat = 0.0
 
-    # if msg.selling_price == 0 and msg.grid_status:
-    #     p_bat = -2
+    if msg.bessSOC<0.2:
+        if p_bat>0.0:
+            p_bat=0.0
+
 
     return ResultsMessage(data_msg=msg,
-                          load_one=load1,
-                          load_two=load2,
-                          load_three=load3,
-                          power_reference=float(p_bat),
+                          load_one=L1,
+                          load_two=L2,
+                          load_three=L3,
+                          power_reference =p_bat,
                           pv_mode=panel)
 
 
