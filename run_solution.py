@@ -5,7 +5,7 @@ be provided by contestants
 """
 
 import sys
-from hackathon.solution.solution import run
+from hackathon.solution.solutionANN import run
 
 __author__ = "Novak Boskov"
 __copyright__ = "Typhoon HIL Inc."

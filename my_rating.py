@@ -45,9 +45,8 @@ def energy_mark(consumption: float,
     return consumption - bess_sell
 
 
-def get_physics_metrics(d: DataMessage, r: ResultsMessage,
-                        spent_time: float, match: bool) \
-                        -> Tuple[float, float, float, float, float, float,
+def get_physics_metrics(d: DataMessage, r: ResultsMessage)\
+                        -> Tuple[float, float, float, float, float,
                                  float, bool, float]:
     global overload_cnt
     global penal_l1_cnt
@@ -143,10 +142,7 @@ def get_physics_metrics(d: DataMessage, r: ResultsMessage,
     if soc_bess > 1:
         soc_bess = 1
 
-    # TARGET_1MS_PRICE = 100  # targeted daily price for 1ms avg spent time
-    performance_mark = 0 #(spent_time*1000) * (24/(TARGET_1MS_PRICE*CFG.sampleRate))
-
     em = energy_mark(consumption, bess_sell)
     pv_power = d.solar_production if r.pv_mode == PVMode.ON else 0
-    return em, performance_mark, mg, penal, r_load, pv_power, soc_bess, \
+    return em, mg, penal, r_load, pv_power, soc_bess, \
         overload, current_power

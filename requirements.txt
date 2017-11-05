@@ -3,3 +3,4 @@ pyzmq
 mypy
 matplotlib
 scipy
+tensorflow

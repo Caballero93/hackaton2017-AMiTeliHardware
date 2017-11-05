@@ -90,6 +90,9 @@ def run(args) -> None:
     time.sleep(lapse_time)
 
     print('D: {}'.format(len(profile)))
+
+    profile_list = []
+
     for i, rec in enumerate(profile):
         if i == 0:
             soc_bess, overload, mg, current_power = ini['bessSOC'],      \
@@ -112,8 +115,16 @@ def run(args) -> None:
         if CFG.DBG:
             print('Framework emits {}'.format(data))
 
+        profile_list.append(data)
+
         data_emit_socket.send_pyobj(data)
         rater(result_gather_socket, results_poll, data)
+
+    file = open("./input_data.pickle", "wb")
+    pickle.dump(profile_list, file)
+    file.close()
+
+    print("Ovde se ubaciti")
 
     # Send terminating message to the solution
     data_emit_socket.send_pyobj(False)
