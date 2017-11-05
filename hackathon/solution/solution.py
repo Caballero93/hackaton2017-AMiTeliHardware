@@ -38,7 +38,7 @@ def worker(msg: DataMessage) -> ResultsMessage:
             else:
                 p_bat=0.0
         else:
-            if msg.current_load > 8.0:
+            if msg.current_load > 7.0:
                 L2 = False
             if msg.solar_production < 0.3*msg.current_load:
                 L3=False
